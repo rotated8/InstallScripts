@@ -76,7 +76,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # Ansible provisioner default settings
   config.vm.provision vagrant_ansible_provisioner() do |ansible|
     ansible.playbook = "ansible/#{site_file()}_site.yml"
-    ansible.verbose = ""
+    ansible.verbose = "vv"
   end
 
   # Application server
@@ -126,10 +126,12 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       aws.access_key_id = ENV['AWS_ACCESS_KEY']
       aws.secret_access_key = ENV['AWS_SECRET_KEY']
       aws.keypair_name = keypair
-      aws.ami = "ami-df0607b5" # Ubuntu Trusty LTS
+      aws.ami = "ami-33ea9424" # Ubuntu Trusty LTS 2016-09-19
+      aws.subnet_id = "subnet-a237c98f"
       aws.region = "us-east-1"
       aws.instance_type = "t2.small"
-      aws.security_groups = security_groups('AWS_SECURITY_GROUPS')
+      #aws.security_groups = security_groups('AWS_SECURITY_GROUPS')
+      aws.security_groups = ["sg-6b673211"]
       override.ssh.username = "ubuntu"
       override.ssh.private_key_path = "#{keypair_filename}"
       aws.tags = {
