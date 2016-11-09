@@ -2,7 +2,19 @@
 - name: import nodesource GPG key
   apt_key:
     url: https://deb.nodesource.com/gpgkey/nodesource.gpg.key
-    state: present
+  ignore_errors: True
+  register: add_key
+
+- name: download nodesource GPG key
+  command: /usr/bin/curl https://deb.nodesource.com/gpgkey/nodesource.gpg.key -o /tmp/nodesource.gpg.key
+  args:
+    creates: /tmp/nodesource.gpg.key
+  when: add_key|failed
+
+- name: import local nodesource GPG key
+  apt_key:
+    file: /tmp/nodesource.gpg.key
+  when: add_key|failed
 
 - name: add nodesource deb repo
   apt_repository:

@@ -1,8 +1,20 @@
 ---
-- name: add postgresql key
+- name: add postgresql apt key
   apt_key:
     url: https://www.postgresql.org/media/keys/ACCC4CF8.asc
-    state: present
+  ignore_errors: True
+  register: add_key
+
+- name: download postgresql apt key
+  command: /usr/bin/curl https://www.postgresql.org/media/keys/ACCC4CF8.asc -o /tmp/ACCC4CF8.asc
+  args:
+    creates: /tmp/ACCC4CF8.asc
+  when: add_key|failed
+
+- name: add local postgresql apt key
+  apt_key:
+    file: /tmp/ACCC4CF8.asc
+  when: add_key|failed
 
 - name: add postgresql repository
   apt_repository:
